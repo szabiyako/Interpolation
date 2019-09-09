@@ -112,6 +112,9 @@ void Interpol::outFileAnswer()
 	int size = v.size();
 	for (int i = 0; i < size; i++)
 	{
+		*this->output << std::fixed;
+		//How many numbers will shows (EX 1.234852134000)
+		this->output->precision(8);
 		*this->output << v.at(i) << "\n";
 		//LOGS
 		Console::addLine(std::to_string(v.at(i)));
