@@ -50,5 +50,5 @@ public:
 	void draw(sf::RenderTarget &window, sf::RenderStates states) const;
 };
 
-#endif CONSOLE_H
+#endif
 
