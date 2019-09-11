@@ -21,13 +21,18 @@ private:
 	sf::RectangleShape *inputLine;
 	sf::Font *font;
 	sf::Text *text;
+	sf::RectangleShape *scrollBar;
 	
 	//Control part
-	float scrollPosition;
+	static float scrollPosition;
+	bool scrollPressed;
+	int oldMouseY;
+	sf::Vector2f oldScrollPos;
 	
 
 	//direction 1-Down, 0-UP
 	void move(float &dt, bool direction);
+	bool isScrollPressd(sf::RenderWindow &window);
 public:
 	Console(sf::Font& font);
 	Console(const char * fontPath);
@@ -45,5 +50,5 @@ public:
 	void draw(sf::RenderTarget &window, sf::RenderStates states) const;
 };
 
-#endif
+#endif CONSOLE_H
 
