@@ -2,7 +2,7 @@
 #define CONSOLE_H
 
 #define CONSOLE_MOVE_SPEED 1800.f
-#define CONSOLE_MAX_LINES 50
+#define CONSOLE_MAX_LINES 150
 
 #include "UIelement.h"
 
@@ -45,5 +45,5 @@ public:
 	void draw(sf::RenderTarget &window, sf::RenderStates states) const;
 };
 
-#endif CONSOLE_H
+#endif
 

@@ -57,7 +57,7 @@ Console::Console(sf::Font & font)
 	this->background->setOrigin(sf::Vector2f(0.f, 360.f));
 	this->background->setPosition(sf::Vector2f(0.f, 0.f));
 	this->inputLine = new sf::RectangleShape(sf::Vector2f(1280.f, 26.f));
-	this->inputLine->setFillColor(sf::Color(55, 55, 55, 150));
+	this->inputLine->setFillColor(sf::Color(55, 55, 55, 255));
 	this->inputLine->setOrigin(sf::Vector2f(0.f, 26.f));
 	this->inputLine->setPosition(sf::Vector2f(0.f, 0.f));
 }
@@ -116,17 +116,17 @@ bool Console::run(float & dt, sf::RenderWindow & window, float & mouseWheelDelta
 		if (mouseWheelDelta != 0.f)
 		{
 			this->scrollPosition += 30000 * dt * mouseWheelDelta;
-			if (this->scrollPosition < 0)
-				this->scrollPosition = 0;
+			if (this->scrollPosition < 0.f)
+				this->scrollPosition = 0.f;
 
 			int size = this->lines->size();
-			if (size <= 13)
+			if (size <= 12)
 			{
-				this->scrollPosition = 0;
+				this->scrollPosition = 0.f;
 			}
-			else if (this->scrollPosition > 26.f * (size - 13))
+			else if (this->scrollPosition > 26.f * (size - 12))
 			{
-				this->scrollPosition = 26.f * (size - 13);
+				this->scrollPosition = 26.f * (size - 12);
 			}
 		}
 	}
@@ -164,15 +164,15 @@ void Console::draw(sf::RenderTarget & window, sf::RenderStates states) const
 	if (this->visible)
 	{
 		window.draw(*this->background, states);
-		window.draw(*this->inputLine, states);
 		unsigned int size = this->lines->size();
 		if (size > 0)
 		{
 			sf::Vector2f startPosForRender = this->inputLine->getPosition();
 			this->text->setPosition(startPosForRender.x, startPosForRender.y + this->scrollPosition);
+			startPosForRender.y += 26.f;
 
 			this->lines->ResetCurrent();
-			for (unsigned int i = 0; i < size && this->text->getPosition().y > 0; i++, this->lines->NextCurrent())
+			for (unsigned int i = 0; i < size && this->text->getPosition().y > 0.f; i++, this->lines->NextCurrent())
 			{
 				if (this->text->getPosition().y <= startPosForRender.y)
 				{
@@ -182,5 +182,6 @@ void Console::draw(sf::RenderTarget & window, sf::RenderStates states) const
 				this->text->move(sf::Vector2f(0.f, -26.f));
 			}
 		}
+		window.draw(*this->inputLine, states);
 	}
 }
