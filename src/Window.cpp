@@ -61,7 +61,7 @@ void Window::InitConsole()
 }
 
 //Constructor/destructor
-Window::Window() : dt(0)
+Window::Window() : dt(0), mouseWheelDelta(0.f)
 {
 	this->InitWindow();
 	this->InitSFMLevent();
@@ -93,13 +93,20 @@ void Window::updateDt()
 
 void Window::updateSFMLevents()
 {
+	this->mouseWheelDelta = 0.f;
 	while (this->window->pollEvent(*this->sfEvent))
 	{
+		//WindowEvents
 		if (this->sfEvent->type == sf::Event::Closed)
 			this->window->close();
 		else if (this->sfEvent->type == sf::Event::Resized)
 		{
 			this->window->setSize(sf::Vector2u(1280, 720));
+		}
+		//MouseEvents
+		else if (this->sfEvent->type == sf::Event::MouseWheelScrolled)
+		{
+			this->mouseWheelDelta = sfEvent->mouseWheelScroll.delta;
 		}
 	}
 }
@@ -107,7 +114,7 @@ void Window::updateSFMLevents()
 void Window::update()
 {
 	this->updateSFMLevents();
-	if (!this->console->run(this->dt, *this->window))
+	if (!this->console->run(this->dt, *this->window, this->mouseWheelDelta))
 		this->scene_manager->update(this->dt);
 	this->fps->setFpsSmooth(this->dt);
 }

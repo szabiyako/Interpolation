@@ -33,6 +33,7 @@ void Console::move(float & dt, bool direction)
 		{
 			this->stopMoving = false;
 			this->visible = false;
+			this->scrollPosition = 0.f;
 
 			this->background->setPosition(sf::Vector2f(0.f, 0.f));
 			this->inputLine->setPosition(sf::Vector2f(0.f, 0.f));
@@ -43,7 +44,7 @@ void Console::move(float & dt, bool direction)
 
 //PUBLIC
 Console::Console(sf::Font & font)
-	: visible(false), keyPressed(false), running(false), stopMoving(false), font(nullptr)
+	: visible(false), keyPressed(false), running(false), stopMoving(false), font(nullptr), scrollPosition(0.f)
 {
 	this->lines = new StrList();
 	this->text = new sf::Text("", font, 20);
@@ -62,7 +63,7 @@ Console::Console(sf::Font & font)
 }
 
 Console::Console(const char * fontPath)
-	: visible(false), keyPressed(false), running(false), stopMoving(false)
+	: visible(false), keyPressed(false), running(false), stopMoving(false), scrollPosition(0.f)
 {
 	this->font = new sf::Font();
 	this->font->loadFromFile(fontPath);
@@ -99,7 +100,7 @@ void Console::addLine(sf::String line)
 		lines->pop();
 }
 
-bool Console::run(float & dt, sf::RenderWindow & window)
+bool Console::run(float & dt, sf::RenderWindow & window, float & mouseWheelDelta)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde))
 		this->keyPressed = true;
@@ -107,6 +108,27 @@ bool Console::run(float & dt, sf::RenderWindow & window)
 	{
 		this->keyPressed = false;
 		this->running = this->running ? false : true;
+	}
+
+	//Controls
+	if (this->visible)
+	{
+		if (mouseWheelDelta != 0.f)
+		{
+			this->scrollPosition += 30000 * dt * mouseWheelDelta;
+			if (this->scrollPosition < 0)
+				this->scrollPosition = 0;
+
+			int size = this->lines->size();
+			if (size <= 13)
+			{
+				this->scrollPosition = 0;
+			}
+			else if (this->scrollPosition > 26.f * (size - 13))
+			{
+				this->scrollPosition = 26.f * (size - 13);
+			}
+		}
 	}
 	
 	if (this->running)
@@ -125,7 +147,16 @@ bool Console::run(float & dt, sf::RenderWindow & window)
 
 void Console::update(float & dt, sf::RenderWindow & window, MultiStorage & multistorage)
 {
+	if (multistorage.getVectorInt() == nullptr)
+		multistorage.CreateVectorInt();
 
+	if (multistorage.getVectorInt()->size() < 1)
+		multistorage.getVectorInt()->push_back(false);
+	if (multistorage.getVectorDouble()->size() < 1)
+		multistorage.getVectorDouble()->push_back(0);
+
+	float temp = (float)multistorage.getVectorDouble()->at(0);
+	multistorage.getVectorInt()->at(0) = this->run(dt, window, temp);
 }
 
 void Console::draw(sf::RenderTarget & window, sf::RenderStates states) const
@@ -137,20 +168,19 @@ void Console::draw(sf::RenderTarget & window, sf::RenderStates states) const
 		unsigned int size = this->lines->size();
 		if (size > 0)
 		{
-			this->text->setPosition(this->inputLine->getPosition());
+			sf::Vector2f startPosForRender = this->inputLine->getPosition();
+			this->text->setPosition(startPosForRender.x, startPosForRender.y + this->scrollPosition);
 
 			this->lines->ResetCurrent();
-			for (unsigned int i = 0; i < size; i++, this->lines->NextCurrent())
+			for (unsigned int i = 0; i < size && this->text->getPosition().y > 0; i++, this->lines->NextCurrent())
 			{
-				this->text->setString(this->lines->getCurrentString());
-				window.draw(*this->text, states);
+				if (this->text->getPosition().y <= startPosForRender.y)
+				{
+					this->text->setString(this->lines->getCurrentString());
+					window.draw(*this->text, states);
+				}
 				this->text->move(sf::Vector2f(0.f, -26.f));
 			}
 		}
 	}
-}
-
-void Console::render(sf::RenderTarget & window, sf::RenderStates states)
-{
-	this->draw(window, states);
 }

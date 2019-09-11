@@ -32,6 +32,8 @@ private:
 	Console *console;
 	sf::RenderStates *render_states; //Currently doesnt work, need to connect it whith scenes
 
+	float mouseWheelDelta;
+
 	//Initialazers
 	void InitWindow();
 	void InitSFMLevent();

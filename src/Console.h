@@ -2,7 +2,7 @@
 #define CONSOLE_H
 
 #define CONSOLE_MOVE_SPEED 1800.f
-#define CONSOLE_MAX_LINES 13
+#define CONSOLE_MAX_LINES 50
 
 #include "UIelement.h"
 
@@ -11,6 +11,7 @@
 class Console : public UIelement
 {
 private:
+	//Visual part
 	bool visible;
 	bool keyPressed;
 	bool running;
@@ -20,7 +21,9 @@ private:
 	sf::RectangleShape *inputLine;
 	sf::Font *font;
 	sf::Text *text;
-
+	
+	//Control part
+	float scrollPosition;
 	
 
 	//direction 1-Down, 0-UP
@@ -35,13 +38,11 @@ public:
 	/*==========================================================**
 	** Console logic, return true if opened and false if closed **
 	**==========================================================*/
-	bool run(float &dt, sf::RenderWindow &window);
+	bool run(float &dt, sf::RenderWindow &window, float &mouseWheelDelta);
 
 	void update(float &dt, sf::RenderWindow &window, MultiStorage &multistorage);
 
 	void draw(sf::RenderTarget &window, sf::RenderStates states) const;
-
-	void render(sf::RenderTarget &window, sf::RenderStates states = sf::RenderStates::Default);
 };
 
 #endif CONSOLE_H
