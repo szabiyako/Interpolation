@@ -1,5 +1,6 @@
 #include "Console.h"
 
+unsigned int Console::CONSOLE_MAX_LINES = 150;
 
 StrList* Console::lines = nullptr;
 float Console::scrollPosition = 0;
@@ -22,7 +23,7 @@ void Console::move(float & dt, bool direction)
 			this->background->setPosition(sf::Vector2f(0.f, 360.f));
 			this->inputLine->setPosition(sf::Vector2f(0.f, 360.f));
 			this->text->setPosition(sf::Vector2f(0.f, 360.f));
-			this->scrollBar->setPosition(sf::Vector2f(1260.f, 250.f));
+			this->scrollBar->setPosition(sf::Vector2f(1260.f, 250.f - ((250.f * this->scrollPosition) / (26.f * (this->lines->size() - 12)))));
 		}
 	}
 	else //UP
@@ -70,6 +71,22 @@ bool Console::isScrollPressd(sf::RenderWindow &window)
 	if (this->scrollPressed)
 		return true;
 	return false;
+}
+
+void Console::setMaxLines(unsigned int count)
+{
+	unsigned int size = this->lines->size();
+	if (size < count)
+	{
+		int delta = count - size;
+		for (int i = 0; i < delta; i++)
+			this->lines->pop();
+	}
+}
+
+int Console::getMaxLines()
+{
+	return this->CONSOLE_MAX_LINES;
 }
 
 //PUBLIC
@@ -153,38 +170,42 @@ bool Console::run(float & dt, sf::RenderWindow & window, float & mouseWheelDelta
 	//Controls
 	if (this->visible)
 	{
-		if (mouseWheelDelta != 0.f)
+		if (this->stopMoving)
 		{
-			this->scrollPosition += 30000 * dt * mouseWheelDelta;
-			if (this->scrollPosition < 0.f)
-				this->scrollPosition = 0.f;
-
-			int size = this->lines->size();
-			if (size <= 12)
+			if (mouseWheelDelta != 0.f)
 			{
-				this->scrollPosition = 0.f;
+				//OLD this->scrollPosition += 30000 * dt * mouseWheelDelta;
+				this->scrollPosition += 6.81f * mouseWheelDelta;
+				if (this->scrollPosition < 0.f)
+					this->scrollPosition = 0.f;
+
+				int size = this->lines->size();
+				if (size <= 12)
+				{
+					this->scrollPosition = 0.f;
+				}
+				else if (this->scrollPosition > 26.f * (size - 12))
+				{
+					this->scrollPosition = 26.f * (size - 12);
+				}
+				this->scrollBar->setPosition(sf::Vector2f(1260.f, 250.f - ((250.f * this->scrollPosition) / (26.f * (size - 12)))));
 			}
-			else if (this->scrollPosition > 26.f * (size - 12))
+			else if (this->isScrollPressd(window))
 			{
-				this->scrollPosition = 26.f * (size - 12);
-			}
-			this->scrollBar->setPosition(sf::Vector2f(1260.f, 250.f - ((250.f * this->scrollPosition) / (26.f * (size - 12)))));
-		}
-		else if (this->isScrollPressd(window))
-		{
-			int size = this->lines->size();
-			if (size > 12)
-			{
-				sf::Vector2i cursor = sf::Mouse::getPosition(window);
-				float newPos = this->oldScrollPos.y + (float)(cursor.y - this->oldMouseY);
-				if (newPos > 250.f)
-					newPos = 250.f;
-				else if (newPos < 0.f)
-					newPos = 0.f;
+				int size = this->lines->size();
+				if (size > 12)
+				{
+					sf::Vector2i cursor = sf::Mouse::getPosition(window);
+					float newPos = this->oldScrollPos.y + (float)(cursor.y - this->oldMouseY);
+					if (newPos > 250.f)
+						newPos = 250.f;
+					else if (newPos < 0.f)
+						newPos = 0.f;
 
-				this->scrollPosition = (250.f - newPos) * ((26.f * (size - 12)) / 250.f);
+					this->scrollPosition = (250.f - newPos) * ((26.f * (size - 12)) / 250.f);
 
-				this->scrollBar->setPosition(sf::Vector2f(1260.f, newPos));
+					this->scrollBar->setPosition(sf::Vector2f(1260.f, newPos));
+				}
 			}
 		}
 	}
