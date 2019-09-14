@@ -4,10 +4,17 @@
 
 void Main_Menu::InitText()
 {
-	this->text = new sf::Text(L"Программа студента 3-го Курса ФИИТ 61гр Забияко Александра\nЗадание 14) Уплотнение в два раза таблицы значений функции с равноотстоящими\n                       значениями аргумента", *this->resource_manager->getFontSystem());
+	sf::String label = L"Программа студента 3-го Курса ФИИТ 61гр Забияко Александра\n";
+	label += L"Задание 14) Уплотнение в два раза таблицы значений функции с равноотстоящими\n";
+	label += L"            значениями аргумента.\n";
+	label += L"Ввод        Во входной файл последовательно вводятся\n";
+	label += L"            количество значений функции, степень интерполяции\n";
+	label += L"            и сами значения функции";
+	this->text = new sf::Text(label, *this->resource_manager->getFontSystem());
 	this->text->setPosition(sf::Vector2f(20.f, 20.f));
 	this->log = new sf::Text(L"", *this->resource_manager->getFontSystem());
 	this->log->setPosition(sf::Vector2f(735.f, 530.f));
+	this->log->setOutlineColor(sf::Color::Black);
 }
 
 void Main_Menu::InitTexture()
@@ -22,16 +29,16 @@ void Main_Menu::InitBackground()
 	this->background->setTextureRect(sf::IntRect(0, 0, 1280, 720));
 	this->background->setPosition(0.f, 0.f);
 	
-	this->backText = new sf::RectangleShape(sf::Vector2f(1280.f, 160.f));
+	this->backText = new sf::RectangleShape(sf::Vector2f(1280.f, 235.f));
 	this->backText->setFillColor(sf::Color(40, 40, 40, 125));
 }
 
 void Main_Menu::InitButtons()
 {
-	this->button_exit = new UI::ButtonText(this->resource_manager->getFontSystem(), L"Выход", sf::Vector2f(140.f, 60.f), 40);
-	this->button_start = new UI::ButtonText(this->resource_manager->getFontSystem(), L"Запуск", sf::Vector2f(140.f, 60.f), 40);
-	this->button_start->setPosition(sf::Vector2f(540.f, 520.f));
-	this->button_exit->setPosition(sf::Vector2f(540.f, 620.f));
+	this->button_exit = new UI::ButtonText(this->resource_manager->getFontSystem(), L"Выход", sf::Vector2f(120.f, 60.f), 40);
+	this->button_start = new UI::ButtonText(this->resource_manager->getFontSystem(), L"Запуск", sf::Vector2f(120.f, 60.f), 40);
+	this->button_start->setPosition(sf::Vector2f(550.f, 520.f));
+	this->button_exit->setPosition(sf::Vector2f(550.f, 620.f));
 }
 
 
@@ -65,23 +72,36 @@ void Main_Menu::update(float & dt, int &current_scene, sf::RenderWindow &window)
 		if (t == -1)
 		{
 			this->log->setFillColor(sf::Color::Red);
+			this->log->setOutlineThickness(5.f);
 			this->log->setString(L"Не удаётся открыть файл \"input.txt\"");
+			Console::addLine(L"ERROR: Не удаётся открыть файл \"input.txt\"");
 		}
 		else if (t == -2)
 		{
 			this->log->setFillColor(sf::Color::Red);
+			this->log->setOutlineThickness(5.f);
 			this->log->setString(L"Не удаётся открыть файл \"output.txt\"");
+			Console::addLine(L"ERROR: Не удаётся открыть файл \"output.txt\"");
 		}
 		else if (t == -3)
 		{
 			this->log->setFillColor(sf::Color::Red);
-			this->log->setString(L"Входных значений меньше трёх N < 3");
+			this->log->setOutlineThickness(5.f);
+			this->log->setString(L"Степень интерполяции болшьше\nили равна числу точек");
+			Console::addLine(L"ERROR: Степень интерполяции болшьше или равна числу точек");
 		}
 		else
 		{
+			Console::addLine(L"---------------------");
+			Console::addLine(L"LOG: Начало рассчётов");
+			Console::addLine(L"---------------------");
 			ip.outFileAnswer();
 			this->log->setFillColor(sf::Color::White);
+			this->log->setOutlineThickness(0.f);
 			this->log->setString(L"Готово");
+			Console::addLine(L"---------------------");
+			Console::addLine(L"LOG: Рассчёт завершён");
+			Console::addLine(L"---------------------");
 		}
 	}
 

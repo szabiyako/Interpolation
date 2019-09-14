@@ -52,7 +52,7 @@ void Window::InitScene_Manager()
 void Window::InitResource_Manager()
 {
 	this->resource_manager = new Resource_Manager();
-	this->resource_manager->setFontSystem("resources/fonts/arial.ttf");
+	this->resource_manager->setFontSystem("resources/fonts/UbuntuMono-R.ttf");
 }
 
 void Window::InitConsole()

@@ -1,6 +1,6 @@
 #include "Console.h"
 
-unsigned int Console::CONSOLE_MAX_LINES = 150;
+unsigned int Console::CONSOLE_MAX_LINES = 250;
 
 StrList* Console::lines = nullptr;
 float Console::scrollPosition = 0;
@@ -151,6 +151,17 @@ Console::~Console()
 
 void Console::addLine(sf::String line)
 {
+	//125 maxline size for UbuntuMono-R.ttf
+	unsigned int SymbolsCount = 125;
+	while (line.getSize() > SymbolsCount)
+	{
+		sf::String temp = L"";
+		for (unsigned int i = 0; i < SymbolsCount; i++)
+			temp += line[i];
+		addLine(temp);
+		line.erase(0, SymbolsCount);
+	}
+
 	lines->push(line);
 	if (lines->size() > CONSOLE_MAX_LINES)
 		lines->pop();

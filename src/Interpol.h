@@ -14,9 +14,13 @@ private:
 	std::ifstream *input;
 	std::ofstream *output;
 
-	double l(int i, double j);
+	//degree of interpolation
+	unsigned int m;
+
+	double l(int &i, double &j, int &begin_index, int &end_index);
 	void fillAdditional();
 	std::vector<double> getAnswerVector();
+	void getBeginEnd(double &j, int &begin, int &end);
 public:
 	Interpol();
 	virtual ~Interpol();

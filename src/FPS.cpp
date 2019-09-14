@@ -7,7 +7,7 @@ FPS::FPS(const char * font) : fps(0), fpsSum(0), fpsCount(0), updatefps(0.25), u
 	this->font = new sf::Font();
 	this->font->loadFromFile(font);
 	this->text = new sf::Text("", *this->font, 10);
-	this->backround = new sf::RectangleShape(sf::Vector2f(50.f, 13.f));
+	this->backround = new sf::RectangleShape(sf::Vector2f(42.f, 13.f));
 	this->backround->setFillColor(sf::Color(0, 0, 0, 150));
 	this->backround->setPosition(sf::Vector2f(0.f, 0.f));
 }
@@ -15,7 +15,7 @@ FPS::FPS(const char * font) : fps(0), fpsSum(0), fpsCount(0), updatefps(0.25), u
 FPS::FPS(sf::Font & font) : fps(0), fpsSum(0), fpsCount(0), updatefps(0.25), upd(0), fromFont(true)
 {
 	this->text = new sf::Text("", font, 10);
-	this->backround = new sf::RectangleShape(sf::Vector2f(50.f, 13.f));
+	this->backround = new sf::RectangleShape(sf::Vector2f(42.f, 13.f));
 	this->backround->setFillColor(sf::Color(0, 0, 0, 150));
 	this->backround->setPosition(sf::Vector2f(0.f, 0.f));
 }
